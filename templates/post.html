@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% include "header.html" %}
+
+
+<body>
+
+{% include "nav.html" %}
+
+  <!-- Page Header -->
+  {% for blog in blogs: %}
+  {% if blog["id"] == num: %}
+  <header class="masthead" style="background-image: url('{{blog['img_url']}}')">
+    {% endif %}
+    {% endfor %}
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            {% for blog in blogs: %}
+              {% if blog["id"] == num: %}
+                <h1>{{blog["title"]}}</h1>
+                <h2 class="subheading">{{blog["subtitle"]}}</h2>
+                <span class="meta">Posted by
+                <a href="https://www.linkedin.com/in/holly-krambeck/">{{blog["author"]}}</a>
+                on {{blog["date"]}}</span>
+                <a style ="font-size:12px; color:#d3e0ea;"  href="{{blog['img_url']}}"target="_blank">Image Source</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        {% for blog in blogs: %}
+          {% if blog["id"] == num: %}
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>{{blog["body"] | safe}}</p>
+          {% endif %}
+          {% endfor %}
+
+          <a class="btn btn-primary float-right" href="{{url_for('edit_post', num=num)}}">Edit Post</a>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+{% include "footer.html" %}
+
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="static/vendor/jquery/jquery.min.js"></script>
+  <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="static/js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
