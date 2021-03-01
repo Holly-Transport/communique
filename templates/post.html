@@ -46,7 +46,9 @@
           {% endif %}
           {% endfor %}
 
+          {% if logged_in: %}
           <a class="btn btn-primary float-right" href="{{url_for('edit_post', num=num)}}">Edit Post</a>
+          {% endif %}
 
         </div>
       </div>
