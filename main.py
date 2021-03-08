@@ -196,7 +196,7 @@ def post(num):
 
 
 @app.route('/new_post', methods=['GET', 'POST'])
-@admin_only
+@login_required
 def new_post():
     date = dt.datetime.now().strftime("%B %d, %Y")
     form = CreatePostForm(date=date)
@@ -217,7 +217,7 @@ def new_post():
 
 
 @app.route('/edit_post/<int:num>', methods=['GET', 'POST'])
-@admin_only
+@login_required
 def edit_post(num):
     blog = db.session.query(BlogPost).filter_by(id=num).first()
     edit_form = CreatePostForm(
