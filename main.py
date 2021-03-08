@@ -1,44 +1,51 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
-from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, URL
-from flask_ckeditor import CKEditor, CKEditorField
+from forms import CreatePostForm, Registration, Login, Comments
+
 import datetime as dt
 import smtplib
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from functools import wraps
-from flask import abort
-import os
-# from forms import CreatePostForm
-# from flask_gravatar import Gravatar
 
+from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import abort
+from flask_bootstrap import Bootstrap
+from flask_ckeditor import CKEditor
+from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
+from flask_gravatar import Gravatar
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
 year = dt.datetime.now().year
-app.config['SECRET_KEY'] = '123'
+app.config['SECRET_KEY'] = 'Secret'
 ckeditor = CKEditor(app)
 Bootstrap(app)
-my_email = MY_EMAIL
-password = PASSWORD
-your_addy = YOUR_ADDY
-your_name = YOUR_NAME
+my_email = 'MY_EMAIL'
+password = 'PASSWORD'
+your_addy = 'YOUR_ADDY'
+your_name = 'YOUR_NAME'
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# #GRAVATAR SETUP
+# gravatar = Gravatar(app,
+#                     size=50,
+#                     rating='g',
+#                     default='retro',
+#                     force_default=False,
+#                     force_lower=False,
+#                     use_ssl=False,
+#                     base_url=None)
+
+##LOGIN PERMISSIONS SETUP
 login_manager = LoginManager()
 login_manager.init_app(app)
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
-
 
 def admin_only(function):
     @wraps(function)
@@ -50,46 +57,41 @@ def admin_only(function):
         return function(*args, **kwargs)
     return wrapper_function
 
-
-##CONFIGURE TABLE
-class BlogPost(db.Model):
+##CONFIGURE TABLES
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(250), nullable=False)
+    email = db.Column(db.String(250), nullable=False)
+    password =db.Column(db.String(), nullable=False)
+    posts = relationship("BlogPost", back_populates="author")
+    # comments = relationship("Comment", back_populates="comment_author")
+
+class BlogPost(db.Model):
+    __tablename__ = "blog_posts"
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    author = relationship("User", back_populates="posts")
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     date_order = db.Column(db.Integer, nullable=False)
     body = db.Column(db.Text, nullable=False)
-    author = db.Column(db.String(250), nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
+    # comments = relationship("Comment", back_populates="parent_post")
 
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(250), nullable=False)
-    email = db.Column(db.String(250), nullable=False)
-    password =db.Column(db.String(), nullable=False)
 
-# db.create_all()
+# class Comment (db.Model):
+#     __tablename__ = "comments"
+#     id = db.Column(db.Integer, primary_key=True)
+#     text = db.Column(db.Text(), nullable = False)
+#     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+#     comment_author = relationship("User", back_populates="comments")
+#
+#     post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id'))
+#     parent_post = relationship("BlogPost", back_populates="comments")
 
-##WTForm
-class CreatePostForm(FlaskForm):
-    title = StringField("Blog Post Title", validators=[DataRequired()])
-    subtitle = StringField("Subtitle", validators=[DataRequired()])
-    date = StringField("Date (Month DD, YYYY)")
-    author = StringField("Your Name", validators=[DataRequired()])
-    img_url = StringField("Blog Image URL", validators=[DataRequired(), URL()])
-    body = CKEditorField("Blog Content", validators=[DataRequired()])
-    submit = SubmitField("Submit Post")
-
-class Registration(FlaskForm):
-    name = StringField("First Name", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired()])
-    password =PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Register")
-
-class Login(FlaskForm):
-    email = StringField("Email", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[DataRequired()])
-    submit = SubmitField("Login")
+db.create_all()
 
 ##Functions
 def date_to_number(date):
@@ -167,10 +169,27 @@ def all_posts():
     return render_template("all_posts.html", blogs=blog_data, year=year, logged_in=current_user.is_authenticated)
 
 
-@app.route('/post/<int:num>')
+@app.route('/post/<int:num>', methods=['GET', 'POST'])
 def post(num):
-    blog_data = BlogPost.query.order_by(BlogPost.id.desc()).all()
-    return render_template("post.html", blogs=blog_data, num=num, year=year, logged_in=current_user.is_authenticated)
+    blog_data = db.session.query(BlogPost).filter_by(id=num).first()
+    # form = Comments()
+    # if form.validate_on_submit():
+    #     if not current_user.is_authenticated:
+    #         flash("You need to login or register to comment.")
+    #         return redirect(url_for("login"))
+    #
+    #     new_comment = Comment(
+    #         text = form.text.data,
+    #         author_id = current_user.id,
+    #         # comment_author = current_user,
+    #         # parent_post = db.session.query(BlogPost).filter_by(id=num).first(),
+    #         post_id = num
+    #     )
+    #     db.session.add(new_comment)
+    #     db.session.commit()
+    #     form.text.data = ""
+    #     return redirect(url_for('post', num=num))
+    return render_template("post.html", blog=blog_data, num=num, year=year, logged_in=current_user.is_authenticated)
 
 
 @app.route('/new_post', methods=['GET', 'POST'])
@@ -185,7 +204,7 @@ def new_post():
             date=form.date.data,
             date_order=date_to_number(form.date.data),
             body=form.body.data,
-            author=form.author.data,
+            author_id=current_user.id,
             img_url=form.img_url.data
         )
         db.session.add(new_post)
@@ -203,7 +222,7 @@ def edit_post(num):
         subtitle=blog.subtitle,
         date=blog.date,
         img_url=blog.img_url,
-        author=blog.author,
+        author_id=current_user.id,
         body=blog.body
     )
     if edit_form.validate_on_submit():
@@ -212,7 +231,7 @@ def edit_post(num):
         blog.date = edit_form.date.data
         blog.date_order = date_to_number(edit_form.date.data)
         blog.body = edit_form.body.data
-        blog.author = edit_form.author.data
+        blog.author_id = current_user.id,
         blog.img_url = edit_form.img_url.data
         db.session.commit()
         print(f"complete{blog.date_order}")
@@ -220,6 +239,7 @@ def edit_post(num):
     return render_template("edit_post.html", form=edit_form, is_edit=True, num=num, logged_in=current_user.is_authenticated)
 
 @app.route('/delete_post/<int:num>', methods=['GET', 'POST'])
+@admin_only
 def delete_post(num):
     blog = db.session.query(BlogPost).filter_by(id=num).first()
     db.session.delete(blog)
