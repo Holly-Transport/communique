@@ -234,7 +234,7 @@ def edit_post(num):
         blog.date = edit_form.date.data
         blog.date_order = date_to_number(edit_form.date.data)
         blog.body = edit_form.body.data
-        blog.author_id = current_user.id,
+        # blog.author_id = current_user.id,
         blog.img_url = edit_form.img_url.data
         db.session.commit()
         print(f"complete{blog.date_order}")
