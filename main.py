@@ -23,9 +23,9 @@ app.config['SECRET_KEY'] = "123"
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
-my_email = os.getenv("MY_EMAIL")
-pword = os.getenv("PWORD")
-your_addy = os.getenv("YOUR_ADDY")
+my_email = os.environ.get("MY_EMAIL")
+pword = os.environ.get("PWORD")
+your_addy = os.environ.get("YOUR_ADDY")
 your_name = "Holly"
 
 ##CONNECT TO DB
@@ -94,7 +94,7 @@ class BlogPost(db.Model):
 #     post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id'))
 #     parent_post = relationship("BlogPost", back_populates="comments")
 
-db.create_all()
+# db.create_all()
 
 ##Functions
 def date_to_number(date):
