@@ -17,14 +17,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
+
 year = dt.datetime.now().year
 app.config['SECRET_KEY'] = 'Secret'
 ckeditor = CKEditor(app)
 Bootstrap(app)
-my_email = os.environ.get("MY_EMAIL")
-password = os.environ.get('PASSWORD')
-your_addy = os.environ.get('YOUR_ADDY')
-your_name = os.environ.get('YOUR_NAME')
+
+my_email = os.getenv("MY_EMAIL")
+pword = os.getenv("PWORD")
+your_addy = os.getenv("YOUR_ADDY")
+your_name = "Holly"
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
@@ -264,7 +266,7 @@ def contact():
 
         connection = smtplib.SMTP("smtp.gmail.com", 587)
         connection.starttls()
-        connection.login(user=my_email, password=password)
+        connection.login(user=my_email, password=pword)
         connection.sendmail(from_addr=my_email,
                             to_addrs=your_addy,
                             msg="Subject: Someone got in touch!!\n\n"
