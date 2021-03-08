@@ -3,6 +3,7 @@ from forms import CreatePostForm, Registration, Login, Comments
 import datetime as dt
 import smtplib
 from functools import wraps
+import os
 
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask import abort
@@ -20,10 +21,10 @@ year = dt.datetime.now().year
 app.config['SECRET_KEY'] = 'Secret'
 ckeditor = CKEditor(app)
 Bootstrap(app)
-my_email = 'MY_EMAIL'
-password = 'PASSWORD'
-your_addy = 'YOUR_ADDY'
-your_name = 'YOUR_NAME'
+my_email = os.environ.get("MY_EMAIL")
+password = os.environ.get('PASSWORD')
+your_addy = os.environ.get('YOUR_ADDY')
+your_name = os.environ.get('YOUR_NAME')
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
