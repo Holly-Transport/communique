@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 
 year = dt.datetime.now().year
-app.config['SECRET_KEY'] = 'Secret'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -29,7 +29,7 @@ your_addy = os.getenv("YOUR_ADDY")
 your_name = "Holly"
 
 ##CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///posts.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
