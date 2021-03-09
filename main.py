@@ -262,7 +262,7 @@ def contact():
         message = request.form["message"]
         print(f"{name}, {email}, {message}")
 
-        connection = smtplib.SMTP_SSL("smtp.gmail.com", 587)
+        connection = smtplib.SMTP("smtp.gmail.com", 587)
         connection.starttls()
         connection.login(user=my_email, password=pword)
         connection.sendmail(from_addr=my_email,
