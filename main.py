@@ -16,17 +16,15 @@ from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-
-
-year = dt.datetime.now().year
-app.config['SECRET_KEY'] = "123"
 ckeditor = CKEditor(app)
 Bootstrap(app)
+
+year = dt.datetime.now().year
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 my_email = os.environ.get("MY_EMAIL")
 pword = os.environ.get("PWORD")
 your_addy = os.environ.get("YOUR_ADDY")
-your_name = "Holly"
 
 ##CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///posts.db")
