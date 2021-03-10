@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9ffce9d4-85c6-403c-8542-a48868173b7a" name="Default Changelist" comment="Added LinkedIn">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/about.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/post.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/post.html" afterDir="false" />
-    </list>
+    <list default="true" id="9ffce9d4-85c6-403c-8542-a48868173b7a" name="Default Changelist" comment="Fixed Post Formatting" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -224,7 +220,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615343666953</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Fixed Post Formatting">
+      <created>1615344822621</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1615344822621</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -260,6 +263,7 @@
     <MESSAGE value="Added admin page and comments; general formatting tweaks" />
     <MESSAGE value="Revised about.html" />
     <MESSAGE value="Added LinkedIn" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added LinkedIn" />
+    <MESSAGE value="Fixed Post Formatting" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed Post Formatting" />
   </component>
 </project>
