@@ -5,6 +5,7 @@ import smtplib
 from functools import wraps
 import os
 
+
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask import abort
 from flask_bootstrap import Bootstrap
@@ -32,14 +33,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # #GRAVATAR SETUP
-# gravatar = Gravatar(app,
-#                     size=50,
-#                     rating='g',
-#                     default='retro',
-#                     force_default=False,
-#                     force_lower=False,
-#                     use_ssl=False,
-#                     base_url=None)
+gravatar = Gravatar(app,
+                    size=50,
+                    rating='g',
+                    default='retro',
+                    force_default=False,
+                    force_lower=False,
+                    use_ssl=False,
+                    base_url=None)
 
 ##LOGIN PERMISSIONS SETUP
 login_manager = LoginManager()
@@ -66,7 +67,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(250), nullable=False)
     password =db.Column(db.String(), nullable=False)
     posts = relationship("BlogPost", back_populates="author")
-    # comments = relationship("Comment", back_populates="comment_author")
+    comments = relationship("Comment", back_populates="comment_author")
 
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
@@ -79,20 +80,21 @@ class BlogPost(db.Model):
     date_order = db.Column(db.Integer, nullable=False)
     body = db.Column(db.Text, nullable=False)
     img_url = db.Column(db.String(250), nullable=False)
-    # comments = relationship("Comment", back_populates="parent_post")
+    comments = relationship("Comment", back_populates="parent_post")
 
 
-# class Comment (db.Model):
-#     __tablename__ = "comments"
-#     id = db.Column(db.Integer, primary_key=True)
-#     text = db.Column(db.Text(), nullable = False)
-#     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-#     comment_author = relationship("User", back_populates="comments")
-#
-#     post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id'))
-#     parent_post = relationship("BlogPost", back_populates="comments")
+class Comment (db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text(), nullable = False)
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    comment_author = relationship("User", back_populates="comments")
 
-# db.create_all()
+    post_id = db.Column(db.Integer, db.ForeignKey('blog_posts.id'))
+    parent_post = relationship("BlogPost", back_populates="comments")
+
+
+db.create_all()
 
 ##Functions
 def date_to_number(date):
@@ -170,31 +172,41 @@ def all_posts():
     return render_template("all_posts.html", blogs=blog_data, year=year, logged_in=current_user.is_authenticated)
 
 
+@app.route('/admin')
+@admin_only
+def admin():
+    blog_data = BlogPost.query.order_by(BlogPost.date_order.desc()).all()
+    user_data = User.query.order_by(User.id).all()
+    comment_data = Comment.query.all()
+    return render_template("admin.html", comments = comment_data, blogs=blog_data, users = user_data, year=year, logged_in=current_user.is_authenticated)
+
+
+
 @app.route('/post/<int:num>', methods=['GET', 'POST'])
 def post(num):
     blog_data = db.session.query(BlogPost).filter_by(id=num).first()
-    # form = Comments()
-    # if form.validate_on_submit():
-    #     if not current_user.is_authenticated:
-    #         flash("You need to login or register to comment.")
-    #         return redirect(url_for("login"))
-    #
-    #     new_comment = Comment(
-    #         text = form.text.data,
-    #         author_id = current_user.id,
-    #         # comment_author = current_user,
-    #         # parent_post = db.session.query(BlogPost).filter_by(id=num).first(),
-    #         post_id = num
-    #     )
-    #     db.session.add(new_comment)
-    #     db.session.commit()
-    #     form.text.data = ""
-    #     return redirect(url_for('post', num=num))
-    return render_template("post.html", blog=blog_data, num=num, year=year, logged_in=current_user.is_authenticated)
+    form = Comments()
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("You need to login or register to comment.")
+            return redirect(url_for("login"))
+
+        new_comment = Comment(
+            text = form.text.data,
+            author_id = current_user.id,
+            comment_author = current_user,
+            parent_post = db.session.query(BlogPost).filter_by(id=num).first(),
+            post_id = num
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+        form.text.data = ""
+        return redirect(url_for('post', num=num))
+    return render_template("post.html", form = form, blog=blog_data, num=num, year=year, logged_in=current_user.is_authenticated)
 
 
 @app.route('/new_post', methods=['GET', 'POST'])
-@login_required
+@admin_only
 def new_post():
     date = dt.datetime.now().strftime("%B %d, %Y")
     form = CreatePostForm(date=date)
@@ -215,7 +227,7 @@ def new_post():
 
 
 @app.route('/edit_post/<int:num>', methods=['GET', 'POST'])
-@login_required
+@admin_only
 def edit_post(num):
     blog = db.session.query(BlogPost).filter_by(id=num).first()
     edit_form = CreatePostForm(
@@ -247,6 +259,21 @@ def delete_post(num):
     db.session.commit()
     return redirect(url_for('home'))
 
+@app.route('/delete_user/<int:num>', methods=['GET', 'POST'])
+@admin_only
+def delete_user(num):
+    user = db.session.query(User).filter_by(id=num).first()
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
+@app.route('/delete_comment/<int:num>', methods=['GET', 'POST'])
+@admin_only
+def delete_comment(num):
+    comment = db.session.query(Comment).filter_by(id=num).first()
+    db.session.delete(comment)
+    db.session.commit()
+    return redirect(url_for('admin'))
 
 @app.route('/about')
 def about():

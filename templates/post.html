@@ -31,9 +31,9 @@
         <div class="col-lg-8 col-md-10 mx-auto">
           <p>{{blog["body"] | safe}}</p>
 
-          {% if logged_in: %}
-          <a class="btn btn-primary float-right" href="{{url_for('edit_post', num=num)}}">Edit Post</a>
-          {% endif %}
+<!--          {% if logged_in: %}-->
+<!--          <a class="btn btn-primary float-right" href="{{url_for('edit_post', num=num)}}">Edit Post</a>-->
+<!--          {% endif %}-->
 
         </div>
         <br>
@@ -41,6 +41,35 @@
           <hr>
     </div>
   </article>
+
+  <!-- Comments-->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+    {{ ckeditor.load() }}
+    {{ ckeditor.config(name='comments') }}
+    {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+    <hr>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">️</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+        {% for comment in blog['comments']: %}
+      <tbody>
+        <tr>
+          <td class="align-middle"><img src='{{ comment["comment_author"]["email"]| gravatar }}'/></td>
+          <td><p>{{comment["text"] | safe}} -- {{comment["comment_author"]["name"]}}</p></td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+</table>
+      </div>
+    </div>
+  </div>
 
 {% include "footer.html" %}
 {% endblock %}
