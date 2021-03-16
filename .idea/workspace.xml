@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9ffce9d4-85c6-403c-8542-a48868173b7a" name="Default Changelist" comment="Added Coding Practice Section">
+    <list default="true" id="9ffce9d4-85c6-403c-8542-a48868173b7a" name="Default Changelist" comment="Turn off create db's">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -255,7 +255,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615855845880</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Turn off create db's">
+      <created>1615856195652</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1615856195652</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -294,6 +301,7 @@
     <MESSAGE value="Fixed Post Formatting" />
     <MESSAGE value="Commented Out db.create_all()" />
     <MESSAGE value="Added Coding Practice Section" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Coding Practice Section" />
+    <MESSAGE value="Turn off create db's" />
+    <option name="LAST_COMMIT_MESSAGE" value="Turn off create db's" />
   </component>
 </project>

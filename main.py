@@ -101,12 +101,12 @@ class Portfolio (db.Model):
     title = db.Column(db.Text(), nullable = False)
     date = db.Column(db.String(250), nullable=False)
     date_order = db.Column(db.Integer, nullable=False)
-    img_url = db.Column(db.String(250), nullable=False)
-    port_url = db.Column(db.Integer, nullable=False)
+    img_url = db.Column(db.String(), nullable=False)
+    port_url = db.Column(db.String(), nullable=False)
     body = db.Column(db.Text, nullable=False)
 
 
-# db.create_all()
+db.create_all()
 
 ## FUNCTIONS
 def date_to_number(date):
