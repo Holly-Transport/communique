@@ -1,10 +1,9 @@
-from forms import CreatePostForm, Registration, Login, Comments
+from forms import CreatePostForm, Registration, Login, Comments, PortfolioForm
 
 import datetime as dt
 import smtplib
 from functools import wraps
 import os
-
 
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask import abort
@@ -27,12 +26,12 @@ my_email = os.environ.get("MY_EMAIL")
 pword = os.environ.get("PWORD")
 your_addy = os.environ.get("YOUR_ADDY")
 
-##CONNECT TO DB
+## CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///posts.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# #GRAVATAR SETUP
+## GRAVATAR SETUP
 gravatar = Gravatar(app,
                     size=50,
                     rating='g',
@@ -42,7 +41,7 @@ gravatar = Gravatar(app,
                     use_ssl=False,
                     base_url=None)
 
-##LOGIN PERMISSIONS SETUP
+## LOGIN PERMISSIONS SETUP
 login_manager = LoginManager()
 login_manager.init_app(app)
 @login_manager.user_loader
@@ -59,7 +58,7 @@ def admin_only(function):
         return function(*args, **kwargs)
     return wrapper_function
 
-##CONFIGURE TABLES
+## CONFIGURE TABLES
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -68,6 +67,7 @@ class User(UserMixin, db.Model):
     password =db.Column(db.String(), nullable=False)
     posts = relationship("BlogPost", back_populates="author")
     comments = relationship("Comment", back_populates="comment_author")
+
 
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
@@ -94,9 +94,21 @@ class Comment (db.Model):
     parent_post = relationship("BlogPost", back_populates="comments")
 
 
-# db.create_all()
+class Portfolio (db.Model):
+    __tablename__ = "portfolio"
+    id = db.Column(db.Integer, primary_key=True)
+    topic = db.Column(db.Text(), nullable = False)
+    title = db.Column(db.Text(), nullable = False)
+    date = db.Column(db.String(250), nullable=False)
+    date_order = db.Column(db.Integer, nullable=False)
+    img_url = db.Column(db.String(250), nullable=False)
+    port_url = db.Column(db.Integer, nullable=False)
+    body = db.Column(db.Text, nullable=False)
 
-##Functions
+
+db.create_all()
+
+## FUNCTIONS
 def date_to_number(date):
     long_month_name = date.split(" ")[0]
     print(long_month_name)
@@ -112,13 +124,14 @@ def date_to_number(date):
     date_code = int(str(year) + str(month) + str(day))
     return date_code
 
-##Routes
+## ROUTES
 
 @app.route('/')
 def home():
     blog_data = BlogPost.query.order_by(BlogPost.date_order.desc()).all()
     db.session.commit()
     return render_template("index.html", blogs=blog_data, year=year, logged_in=current_user.is_authenticated)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -178,31 +191,29 @@ def admin():
     blog_data = BlogPost.query.order_by(BlogPost.date_order.desc()).all()
     user_data = User.query.order_by(User.id).all()
     comment_data = Comment.query.all()
-    return render_template("admin.html", comments = comment_data, blogs=blog_data, users = user_data, year=year, logged_in=current_user.is_authenticated)
+    port_data = Portfolio.query.all()
+    return render_template("admin.html", portfolio = port_data, comments = comment_data, blogs=blog_data, users = user_data, year=year, logged_in=current_user.is_authenticated)
 
 
-
-@app.route('/post/<int:num>', methods=['GET', 'POST'])
-def post(num):
-    blog_data = db.session.query(BlogPost).filter_by(id=num).first()
-    form = Comments()
+@app.route('/add_port', methods=['GET', 'POST'])
+@admin_only
+def add_port():
+    date = dt.datetime.now().strftime("%B %d, %Y")
+    form = PortfolioForm(date=date)
     if form.validate_on_submit():
-        if not current_user.is_authenticated:
-            flash("You need to login or register to comment.")
-            return redirect(url_for("login"))
-
-        new_comment = Comment(
-            text = form.text.data,
-            author_id = current_user.id,
-            comment_author = current_user,
-            parent_post = db.session.query(BlogPost).filter_by(id=num).first(),
-            post_id = num
+        new_port = Portfolio(
+            topic=form.topic.data,
+            title=form.title.data,
+            date=form.date.data,
+            date_order=date_to_number(form.date.data),
+            img_url=form.img_url.data,
+            port_url=form.port_url.data,
+            body=form.body.data,
         )
-        db.session.add(new_comment)
+        db.session.add(new_port)
         db.session.commit()
-        form.text.data = ""
-        return redirect(url_for('post', num=num))
-    return render_template("post.html", form = form, blog=blog_data, num=num, year=year, logged_in=current_user.is_authenticated)
+        return redirect(url_for('home'))
+    return render_template("add_port.html", form=form, logged_in=current_user.is_authenticated)
 
 
 @app.route('/new_post', methods=['GET', 'POST'])
@@ -251,6 +262,55 @@ def edit_post(num):
         return redirect(url_for('post', num=num))
     return render_template("edit_post.html", form=edit_form, is_edit=True, num=num, logged_in=current_user.is_authenticated)
 
+
+@app.route('/edit_port/<int:num>', methods=['GET', 'POST'])
+@admin_only
+def edit_port(num):
+    entry = db.session.query(Portfolio).filter_by(id=num).first()
+    edit_form = PortfolioForm(
+        topic = entry.topic,
+        title=entry.title,
+        date=entry.date,
+        img_url=entry.img_url,
+        port_url=entry.port_url,
+        body=entry.body
+    )
+    if edit_form.validate_on_submit():
+        entry.topic = edit_form.topic.data
+        entry.title = edit_form.title.data
+        entry.date = edit_form.date.data
+        entry.date_order = date_to_number(edit_form.date.data)
+        entry.img_url = edit_form.img_url.data
+        entry.post_url= edit_form.port_url.data
+        entry.body = edit_form.body.data
+        db.session.commit()
+        return redirect(url_for('admin'))
+    return render_template("edit_port.html", form=edit_form, is_edit=True, num=num, logged_in=current_user.is_authenticated)
+
+
+@app.route('/post/<int:num>', methods=['GET', 'POST'])
+def post(num):
+    blog_data = db.session.query(BlogPost).filter_by(id=num).first()
+    form = Comments()
+    if form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash("You need to login or register to comment.")
+            return redirect(url_for("login"))
+
+        new_comment = Comment(
+            text = form.text.data,
+            author_id = current_user.id,
+            comment_author = current_user,
+            parent_post = db.session.query(BlogPost).filter_by(id=num).first(),
+            post_id = num
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+        form.text.data = ""
+        return redirect(url_for('post', num=num))
+    return render_template("post.html", form = form, blog=blog_data, num=num, year=year, logged_in=current_user.is_authenticated)
+
+
 @app.route('/delete_post/<int:num>', methods=['GET', 'POST'])
 @admin_only
 def delete_post(num):
@@ -258,6 +318,16 @@ def delete_post(num):
     db.session.delete(blog)
     db.session.commit()
     return redirect(url_for('home'))
+
+
+@app.route('/delete_port/<int:num>', methods=['GET', 'POST'])
+@admin_only
+def delete_port(num):
+    entry = db.session.query(Portfolio).filter_by(id=num).first()
+    db.session.delete(entry)
+    db.session.commit()
+    return redirect(url_for('admin'))
+
 
 @app.route('/delete_user/<int:num>', methods=['GET', 'POST'])
 @admin_only
@@ -267,6 +337,7 @@ def delete_user(num):
     db.session.commit()
     return redirect(url_for('admin'))
 
+
 @app.route('/delete_comment/<int:num>', methods=['GET', 'POST'])
 @admin_only
 def delete_comment(num):
@@ -275,9 +346,17 @@ def delete_comment(num):
     db.session.commit()
     return redirect(url_for('admin'))
 
+
 @app.route('/about')
 def about():
     return render_template("about.html", year=year, logged_in=current_user.is_authenticated)
+
+
+@app.route('/portfolio')
+def portfolio():
+    port_data = db.session.query(Portfolio).all()
+    return render_template("portfolio.html", portfolio = port_data, year=year, logged_in=current_user.is_authenticated)
+
 
 @app.route('/contact', methods=["POST", "GET"])
 def contact():
@@ -300,6 +379,7 @@ def contact():
         connection.close()
         return render_template("sent.html")
 
+## RUN APP
 
 if __name__ == "__main__":
     app.run(debug=True)

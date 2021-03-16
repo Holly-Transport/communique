@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9ffce9d4-85c6-403c-8542-a48868173b7a" name="Default Changelist" comment="Fixed Post Formatting" />
+    <list default="true" id="9ffce9d4-85c6-403c-8542-a48868173b7a" name="Default Changelist" comment="Commented Out db.create_all()">
+      <change afterPath="$PROJECT_DIR$/templates/add_port.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/portfolio.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/edit_post.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/edit_post.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/make-post.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/make-post.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -28,10 +37,13 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/templates" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/templates" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -227,7 +239,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615344822621</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Commented Out db.create_all()">
+      <created>1615345785676</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1615345785676</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -264,6 +283,7 @@
     <MESSAGE value="Revised about.html" />
     <MESSAGE value="Added LinkedIn" />
     <MESSAGE value="Fixed Post Formatting" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed Post Formatting" />
+    <MESSAGE value="Commented Out db.create_all()" />
+    <option name="LAST_COMMIT_MESSAGE" value="Commented Out db.create_all()" />
   </component>
 </project>

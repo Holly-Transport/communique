@@ -32,6 +32,9 @@
       <div class="col-lg-8 col-md-10 mx-auto">
 
     <a class="btn btn-primary float-left" href=/new_post>Create New Post</a>
+        <br>
+        <br>
+    <a class="btn btn-primary float-left" href=/add_port>Create New Portfolio Entry</a>
       </div>
     </div>
   </div>
@@ -132,7 +135,38 @@
     </div>
   </div>
 
+<br>
+<br>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+    <h2>Portfolio</h2>
+    <table class="table w-auto table-hover table-responsive">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Date</th>
+              <th scope="col">Topic</th>
+              <th scope="col">Title</th>
+              <th scope="col">Edit</th>
+            </tr>
+          </thead>
 
+          <tbody>
+          {% for entry in portfolio %}
+            <tr>
+              <th scope="row">{{entry['id']}}</th>
+                <th scope="row">{{entry['date']}}</th>
+              <td>{{entry['topic']}}</td>
+              <td>{{entry['title']}}</td>
+              <td><a href="{{url_for('edit_port', num=entry['id'])}}">✏️</td>
+            </tr>
+          </tbody>
+          {% endfor %}
+  	  </table>
+      </div>
+    </div>
+  </div>
 {% include "footer.html" %}
 
   <!-- Bootstrap core JavaScript -->

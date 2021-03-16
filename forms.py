@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_ckeditor import CKEditorField
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField
+from wtforms import StringField, SubmitField, PasswordField, IntegerField
 from wtforms.validators import DataRequired, URL
 
 
@@ -28,3 +28,12 @@ class Login(FlaskForm):
 class Comments(FlaskForm):
     text = CKEditorField("Comment", validators=[DataRequired()])
     submit = SubmitField("Comment")
+
+class PortfolioForm(FlaskForm):
+    topic = StringField("Topic", validators=[DataRequired()])
+    title = StringField("Title", validators=[DataRequired()])
+    date = StringField("Date (Month DD, YYYY)")
+    img_url = StringField("Image URL")
+    port_url = StringField("Portfolio URL")
+    body = StringField("Project Description", validators=[DataRequired()])
+    submit = SubmitField("Submit Post")
