@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9ffce9d4-85c6-403c-8542-a48868173b7a" name="Default Changelist" comment="Turn off create db's">
+    <list default="true" id="9ffce9d4-85c6-403c-8542-a48868173b7a" name="Default Changelist" comment="Fixed database error">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -262,7 +262,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615856195652</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Fixed database error">
+      <created>1615857679108</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1615857679108</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -302,6 +309,7 @@
     <MESSAGE value="Commented Out db.create_all()" />
     <MESSAGE value="Added Coding Practice Section" />
     <MESSAGE value="Turn off create db's" />
-    <option name="LAST_COMMIT_MESSAGE" value="Turn off create db's" />
+    <MESSAGE value="Fixed database error" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed database error" />
   </component>
 </project>
