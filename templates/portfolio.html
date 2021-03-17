@@ -31,7 +31,7 @@
     <a  href="{{entry['port_url']}}" target="_blank"><img class="card-img-top" src="{{entry['img_url']}}" alt="Card image cap"></a>
     <div class="card-body">
       <h5 class="card-title"> <a  href="{{entry['port_url']}}" target="_blank">{{entry['title']}}</a></h5>
-      <p class="card-text">{{entry['body']}}</p>
+      <p class="card-text">{{entry['body'] | safe}}</p>
       <p style="font-size:60%;">Date: {{entry['date']}}</p>
     </div>
   </div>
