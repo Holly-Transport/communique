@@ -35,5 +35,5 @@ class PortfolioForm(FlaskForm):
     date = StringField("Date (Month DD, YYYY)")
     img_url = StringField("Image URL")
     port_url = StringField("Portfolio URL")
-    body = CKEditorField("Project Description", validators=[DataRequired()])
+    body = StringField("Project Description", validators=[DataRequired()])
     submit = SubmitField("Submit Post")
