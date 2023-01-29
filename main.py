@@ -106,7 +106,7 @@ class Portfolio (db.Model):
     body = db.Column(db.Text, nullable=False)
 
 
-# db.create_all()
+db.create_all()
 
 ## FUNCTIONS
 def date_to_number(date):
